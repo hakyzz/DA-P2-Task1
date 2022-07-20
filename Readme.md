@@ -14,6 +14,7 @@ To create a basic nextjs app run:
 ```bash
 npx create-next-app project
 cd project
+npm install
 npm run dev
 ```
 Familiarize yourself with the starter app and the file structure.
