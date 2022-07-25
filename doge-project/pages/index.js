@@ -4,12 +4,10 @@ import useSWR from 'swr'
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-export default function Home() {
+export default function Home({ profile }) {
   const { data: nftData, error: nftDataError } = useSWR("https://api-mainnet.magiceden.dev/v2/tokens/BK6xK21tXxrKeA85yvXQmMMVkkZSf4urNz7ZG9hzJqX", fetcher);
-  const { data: profileData, error: profileDataError } = useSWR("/api/profile", fetcher);
 
-
-  return nftData &&  profileData && (
+  return (
       <div className="bg-gray-100 antialiased min-h-screen font-mono">
       <Head>
         <title>Hakyzz CV</title>
@@ -20,23 +18,23 @@ export default function Home() {
       <main className="max-w-5xl p-5 mx-auto">
         <div className="flex flex-col justify-center items-center mb-10">
           <div className="mb-5">
-            <Image className="rounded-xl" width={200} height={200} src={nftData.image} alt={nftData.name}/>
+            <Image className="rounded-xl" width={200} height={200} src={nftData ? nftData.image : "/placeholder.png"} alt={nftData ? nftData.name : "NFT PP"}/>
           </div>
           <div>
             <h1 className="text-3xl font-bold text-center">
-              {profileData.name}
+              {profile.name}
             </h1>
           </div>
         </div>
         <div className="grid md:grid-cols-2 gap-5">
           <div className="p-7 bg-white/50 rounded-xl">
             <h2 className="text-xl font-bold mb-5">About me</h2>
-            <p className="text-sm">{profileData.description}</p>
+            <p className="text-sm">{profile.description}</p>
           </div>
           <div className="p-7 bg-white/50 rounded-xl">
             <h2 className="text-xl font-bold mb-5">Skills</h2>
             <div className="flex flex-wrap">
-              {profileData.skills.map((skill, i) => (
+              {profile.skills && profile.skills.map((skill, i) => (
                 <span key={i} className="text-sm m-1 rounded-lg px-4 py-1.5 bg-[#a4d6b0]">{skill}</span>
               ))}
               </div>
@@ -48,4 +46,18 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export async function getServerSideProps(context) {
+  let res = await fetch("http://localhost:3000/api/profile", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  let profile = await res.json();
+
+  return {
+    props: { profile: profile[0] },
+  };
 }

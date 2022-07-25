@@ -1,6 +1,18 @@
-import { data } from "./data/data"
+import { connectToDatabase } from "../../util/mongodb";
 
-export default function handler(req, res) {
-    res.status(200).json(data);
-  }
-  
+export default async (req, res) => {
+    const { db } = await connectToDatabase();
+    const { method } = req;
+    
+    switch(method) {
+        case 'GET':
+            const profile = await db
+            .collection("profile")
+            .find({})
+            .limit(1)
+            .toArray();
+    
+            res.json(profile);
+        break;
+    }
+};
