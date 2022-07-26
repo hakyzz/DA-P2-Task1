@@ -9,7 +9,7 @@ export async function getData() {
     .toArray();
 
     return JSON.parse(JSON.stringify(myData[0]))
-  }
+}
   
 export default async (req, res) => {
     const myData = await getData()

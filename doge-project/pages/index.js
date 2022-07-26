@@ -1,12 +1,8 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import useSWR from 'swr'
+import Head from 'next/head';
+import Image from 'next/image';
 import { getData } from './api/profile';
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
-
-export default function Home({ profile }) {
-  const { data: nftData, error: nftDataError } = useSWR("https://api-mainnet.magiceden.dev/v2/tokens/BK6xK21tXxrKeA85yvXQmMMVkkZSf4urNz7ZG9hzJqX", fetcher);
+export default function Home({ profile, nft }) {
   
   return (
       <div className="bg-gray-100 antialiased min-h-screen font-mono">
@@ -19,7 +15,7 @@ export default function Home({ profile }) {
       <main className="max-w-5xl p-5 mx-auto">
         <div className="flex flex-col justify-center items-center mb-10">
           <div className="mb-5">
-            <Image className="rounded-xl" width={200} height={200} src={nftData ? nftData.image : "/placeholder.png"} alt={nftData ? nftData.name : "NFT PP"}/>
+            <Image className="rounded-xl" width={200} height={200} src={nft ? nft.image : "/placeholder.png"} alt={nft ? nft.name : "NFT PP"}/>
           </div>
           <div>
             <h1 className="text-3xl font-bold text-center">
@@ -51,10 +47,14 @@ export default function Home({ profile }) {
 
 export async function getServerSideProps(context) {
   const myData = await getData()
+
+  const res = await fetch('https://api-mainnet.magiceden.dev/v2/tokens/BK6xK21tXxrKeA85yvXQmMMVkkZSf4urNz7ZG9hzJqX')
+  const nftData = await res.json()
   
   return {
     props: {
-     profile: myData
+     profile: myData,
+     nft: nftData
    }
   }
 }
