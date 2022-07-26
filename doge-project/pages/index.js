@@ -1,12 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import useSWR from 'swr'
+import { getData } from './api/profile';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function Home({ profile }) {
   const { data: nftData, error: nftDataError } = useSWR("https://api-mainnet.magiceden.dev/v2/tokens/BK6xK21tXxrKeA85yvXQmMMVkkZSf4urNz7ZG9hzJqX", fetcher);
-
+  
   return (
       <div className="bg-gray-100 antialiased min-h-screen font-mono">
       <Head>
@@ -49,15 +50,11 @@ export default function Home({ profile }) {
 }
 
 export async function getServerSideProps(context) {
-  let res = await fetch("http://localhost:3000/api/profile", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  let profile = await res.json();
-
+  const myData = await getData()
+  
   return {
-    props: { profile: profile[0] },
-  };
+    props: {
+     profile: myData
+   }
+  }
 }

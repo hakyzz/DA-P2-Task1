@@ -1,18 +1,23 @@
 import { connectToDatabase } from "../../util/mongodb";
 
-export default async (req, res) => {
+export async function getData() {
     const { db } = await connectToDatabase();
+    const myData = await db
+    .collection("profile")
+    .find({})
+    .limit(1)
+    .toArray();
+
+    return JSON.parse(JSON.stringify(myData[0]))
+  }
+  
+export default async (req, res) => {
+    const myData = await getData()
     const { method } = req;
-    
+
     switch(method) {
         case 'GET':
-            const profile = await db
-            .collection("profile")
-            .find({})
-            .limit(1)
-            .toArray();
-    
-            res.json(profile);
+            res.json(myData);
         break;
     }
-};
+}
